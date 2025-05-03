@@ -7,7 +7,7 @@ public class Plugin
     public string Description { get; set; }
     public string Version { get; set; }
 
-    //public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UploadedAt { get; set; }
 
     //public string FileUrl { get; set; }
     //public string ThumbnailUrl { get; set; }
@@ -19,6 +19,6 @@ public class Plugin
     //public int? OrganizationId { get; set; }
     //public Organization Organization { get; set; }
 
-    //public ICollection<PluginTag> PluginTags { get; set; }
-    //public ICollection<PluginRating> Ratings { get; set; }
+    public ICollection<PluginTag> PluginTags { get; set; }
+    public ICollection<PluginRating> Ratings { get; set; }
 }

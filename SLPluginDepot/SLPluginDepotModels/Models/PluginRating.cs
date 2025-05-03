@@ -10,8 +10,8 @@ public class PluginRating
     public string UserId { get; set; }
     public ApplicationUser User { get; set; }
 
-    //public int Stars { get; set; }
-    //public string Review { get; set; }
+    public int Stars { get; set; }
+    public string Review { get; set; }
 
-    //public DateTime RatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime RatedAt { get; set; };
 }

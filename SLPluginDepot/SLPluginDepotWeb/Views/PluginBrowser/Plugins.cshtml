@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Plugin Browser";
+    var plugins = ViewBag.Plugins as List<string>;
+}
+
+<h2>Search for Plugins in here!</h2>
+
+<form method="get" asp-controller="Plugin" asp-action="Search" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="query" class="form-control" placeholder="Enter plugin name..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@if (plugins != null && plugins.Count > 0)
+{
+    <h4>Search Results:</h4>
+    <ul class="list-group">
+        @foreach (var plugin in plugins)
+        {
+            <li class="list-group-item">@plugin</li>
+        }
+    </ul>
+}
+else if (plugins != null)
+{
+    <p>No plugins found matching your query.</p>
+}
+<div class="mt-4">
+    <form method="post" asp-controller="Plugin" asp-action="AddNewPlugin">
+        <button type="submit" class="btn btn-success">Add New Plugin</button>
+    </form>
+</div>

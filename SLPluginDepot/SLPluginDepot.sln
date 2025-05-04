@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLPluginDepotWeb", "SLPluginDepotWeb\SLPluginDepotWeb.csproj", "{C40E247D-21FE-4020-A64F-6C0ED5F0A165}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SLPluginDepotWeb", "SLPluginDepotWeb\SLPluginDepotWeb.csproj", "{C40E247D-21FE-4020-A64F-6C0ED5F0A165}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLPluginDepotModels", "SLPluginDepotModels\SLPluginDepotModels.csproj", "{3942CB66-6CD7-4190-BC08-1A7CCB94D4AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SLPluginDepotModels", "SLPluginDepotModels\SLPluginDepotModels.csproj", "{3942CB66-6CD7-4190-BC08-1A7CCB94D4AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLPluginDepotDB", "SLPluginDepotDB\SLPluginDepotDB.csproj", "{079B160E-D0ED-463E-BDB6-74962A9EF024}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SLPluginDepotDB", "SLPluginDepotDB\SLPluginDepotDB.csproj", "{079B160E-D0ED-463E-BDB6-74962A9EF024}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLPluginDepotServices", "SLPluginDepotServices\SLPluginDepotServices.csproj", "{549134F4-BE08-40E3-AB39-F1EE901ED668}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SLPluginDepotServices", "SLPluginDepotServices\SLPluginDepotServices.csproj", "{549134F4-BE08-40E3-AB39-F1EE901ED668}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SLPluginDepotModels.Models;
 using SLPluginDepotDB;
+using SLPluginDepotServices.Services;
+using SLPluginDepotServices.Interfaces;
 
 namespace SLPluginDepotWeb;
 
@@ -21,6 +23,8 @@ public class Program
       .AddDefaultTokenProviders().AddDefaultUI();
 
         builder.Services.AddControllersWithViews();
+
+        builder.Services.AddScoped<IPluginService, PluginService>();
 
         var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿
-namespace SLPluginDepotModels.Models
+namespace SLPluginDepotModels.ViewModels
 {
 	public class ErrorViewModel
 	{

@@ -10,7 +10,12 @@ public class Plugin
     public DateTime UploadedAt { get; set; }
 
     //public string FileUrl { get; set; }
+    //public string GitHubUrl {get; set; }
     //public string ThumbnailUrl { get; set; }
+
+    public string FilePath { get; set; }
+
+    public string FileName { get; set; }
 
     
     public string AuthorId { get; set; }

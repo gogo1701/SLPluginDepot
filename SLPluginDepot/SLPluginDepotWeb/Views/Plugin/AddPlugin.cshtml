@@ -1,0 +1,38 @@
+﻿<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="pluginName">Plugin Name</label>
+        <input type="text" class="form-control" name="pluginName" id="pluginName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="pluginDescription">Plugin Description</label>
+        <textarea class="form-control" name="pluginDescription" id="pluginDescription" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="githubUrl">GitHub URL</label>
+        <input type="text" class="form-control" name="githubUrl" id="githubUrl" />
+    </div>
+
+    <div class="form-group">
+        <label for="pluginFile">Plugin File (.dll)</label>
+        <input type="file" class="form-control" name="pluginFile" id="pluginFile" accept=".dll" required />
+    </div>
+
+    <div class="form-group">
+        <label for="backgroundImage">Background Image</label>
+        <input type="file" class="form-control" name="backgroundImage" id="backgroundImage" accept="image/*" />
+    </div>
+
+    <div class="form-group">
+        <label for="selectedTags">Tags</label>
+        <select multiple class="form-control" name="selectedTags" id="selectedTags">
+            @foreach (var tag in ViewBag.AvailableTags as List<PluginTag>)
+            {
+                <option value="@tag.Id">@tag.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Plugin</button>
+</form>

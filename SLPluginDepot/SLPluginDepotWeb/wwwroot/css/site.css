@@ -20,3 +20,46 @@ html {
 body {
   margin-bottom: 60px;
 }
+.plugin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.plugin-card {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+    .plugin-card:hover {
+        transform: scale(1.05);
+    }
+
+.plugin-details {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+    .plugin-details h3 {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .plugin-details p {
+        margin: 5px 0 0;
+        font-size: 0.9rem;
+    }

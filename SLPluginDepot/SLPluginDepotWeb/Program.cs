@@ -25,6 +25,7 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddScoped<IPluginService, PluginService>();
+        builder.Services.AddScoped<IPluginUploadService, PluginUploadService>();
 
         var app = builder.Build();
 

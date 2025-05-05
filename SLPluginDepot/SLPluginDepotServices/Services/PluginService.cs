@@ -3,6 +3,7 @@ using SLPluginDepotModels.Models;
 using SLPluginDepotDB;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace SLPluginDepotServices.Services
 {
     public class PluginService : IPluginService
@@ -39,6 +40,10 @@ namespace SLPluginDepotServices.Services
                .AsQueryable();
 
             return pluginsQuery;
+        }
+        public IEnumerable<PluginTag> GetAllTags()
+        {
+            return _context.PluginTags.ToList();
         }
     }
 }

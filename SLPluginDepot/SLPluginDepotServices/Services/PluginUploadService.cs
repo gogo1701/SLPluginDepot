@@ -1,8 +1,13 @@
-﻿using SLPluginDepotDB;
-using SLPluginDepotServices.Interfaces;
-using Microsoft.AspNetCore.Http; // <-- Add this for IFormFile
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
+using SLPluginDepotDB;
+using SLPluginDepotModels.Models;
+using SLPluginDepotServices.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SLPluginDepotServices.Services
 {
@@ -15,7 +20,6 @@ namespace SLPluginDepotServices.Services
         {
             _context = dbContext;
 
-            // Ensure the upload folder exists
             if (!Directory.Exists(_uploadPath))
             {
                 Directory.CreateDirectory(_uploadPath);
@@ -25,10 +29,10 @@ namespace SLPluginDepotServices.Services
         public async Task<IEnumerable<Plugin>> GetPluginsFromQueryAsync(string query)
         {
             var pluginsQuery = _context.Plugins
-               .Include(p => p.Author)
-               .Include(p => p.PluginTags)
-               .Include(p => p.Ratings)
-               .AsQueryable();
+                .Include(p => p.Author)
+                .Include(p => p.PluginTags)
+                .Include(p => p.Ratings)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query))
             {
@@ -42,10 +46,10 @@ namespace SLPluginDepotServices.Services
         public async Task<IEnumerable<Plugin>> GetPluginsAsync()
         {
             var pluginsQuery = _context.Plugins
-               .Include(p => p.Author)
-               .Include(p => p.PluginTags)
-               .Include(p => p.Ratings)
-               .AsQueryable();
+                .Include(p => p.Author)
+                .Include(p => p.PluginTags)
+                .Include(p => p.Ratings)
+                .AsQueryable();
 
             return await pluginsQuery.ToListAsync();
         }
@@ -54,32 +58,28 @@ namespace SLPluginDepotServices.Services
         {
             if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
             {
-                // Generate a unique file name to avoid conflicts
                 var fileName = Path.GetFileName(pluginFile.FileName);
                 var filePath = Path.Combine(_uploadPath, fileName);
 
-                // Ensure the file does not already exist
                 if (File.Exists(filePath))
                 {
-                    return false; // A file with the same name already exists.
+                    return false;
                 }
 
-                // Save the file to the file system
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await pluginFile.CopyToAsync(fileStream);
                 }
 
-                // Create a new Plugin object and save the file path to the database
                 var plugin = new Plugin
                 {
                     Name = pluginName,
                     Description = pluginDescription,
-                    FilePath = filePath,  // Store the file path in the database
-                    FileName = pluginFile.FileName,  // Store the original file name
+                    FilePath = filePath,
+                    FileName = pluginFile.FileName,
                     UploadedAt = DateTime.Now,
-                    Version = "1.0", // You can change this to handle versioning logic
-                    AuthorId = userId  // Assuming userId is passed from the controller (i.e., the logged-in user)
+                    Version = "1.0",
+                    AuthorId = userId
                 };
 
                 _context.Plugins.Add(plugin);
@@ -88,7 +88,74 @@ namespace SLPluginDepotServices.Services
                 return true;
             }
 
-            return false; // Invalid file or file type.
+            return false;
+        }
+
+        // Implementing the method with the new backgroundImage parameter
+        public async Task<Plugin> UploadPluginWithTagsAsync(
+            IFormFile pluginFile,
+            string pluginName,
+            string pluginDescription,
+            string githubUrl,
+            List<int> tagIds,
+            string userId,
+            IFormFile backgroundImage)
+        {
+            if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
+            {
+                var fileName = Path.GetFileName(pluginFile.FileName);
+                var filePath = Path.Combine(_uploadPath, fileName);
+
+                if (File.Exists(filePath))
+                {
+                    return null;
+                }
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await pluginFile.CopyToAsync(fileStream);
+                }
+
+                var plugin = new Plugin
+                {
+                    Name = pluginName,
+                    Description = pluginDescription,
+                    FilePath = filePath,
+                    FileName = pluginFile.FileName,
+                    UploadedAt = DateTime.Now,
+                    Version = "1.0",
+                    AuthorId = userId,
+                    PluginTags = new List<PluginTag>()
+                };
+
+                
+                if (backgroundImage != null && backgroundImage.Length > 0)
+                {
+                    var imageFileName = Path.GetFileName(backgroundImage.FileName);
+                    var imagePath = Path.Combine(_uploadPath, imageFileName);
+
+                    using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await backgroundImage.CopyToAsync(imageStream);
+                    }
+
+                    plugin.BackgroundImageUrl = imagePath; 
+                }
+
+                
+                if (tagIds != null && tagIds.Count > 0)
+                {
+                    var tags = _context.PluginTags.Where(t => tagIds.Contains(t.Id)).ToList();
+                    plugin.PluginTags = tags;
+                }
+
+                _context.Plugins.Add(plugin);
+                await _context.SaveChangesAsync();
+
+                return plugin;
+            }
+
+            return null;
         }
     }
 }

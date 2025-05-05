@@ -12,8 +12,8 @@ using SLPluginDepotDB;
 namespace SLPluginDepotDB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250505063247_InitialCommit")]
-    partial class InitialCommit
+    [Migration("20250505064120_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

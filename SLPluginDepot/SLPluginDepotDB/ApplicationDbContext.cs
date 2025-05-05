@@ -16,8 +16,8 @@ namespace SLPluginDepotDB
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Plugin>()
-                .HasMany(p => p.PluginTags)
-                .WithMany(t => t.Plugins);
+                .HasMany(p => p.PluginTags);
+                
 
             modelBuilder.Entity<PluginRating>()
     .HasOne(pr => pr.Plugin)

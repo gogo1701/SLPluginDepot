@@ -91,6 +91,7 @@ namespace SLPluginDepotServices.Services
             return false;
         }
 
+        /*
         public async Task<Plugin> UploadPluginWithTagsAsync(
             IFormFile pluginFile,
             string pluginName,
@@ -127,6 +128,53 @@ namespace SLPluginDepotServices.Services
                 };
 
                
+
+                if (tagIds != null && tagIds.Count > 0)
+                {
+                    var tags = _context.PluginTags.Where(t => tagIds.Contains(t.Id)).ToList();
+                    plugin.PluginTags = tags;
+                }
+
+                _context.Plugins.Add(plugin);
+                await _context.SaveChangesAsync();
+
+                return plugin;
+            }
+
+            return null;
+        }
+        */
+
+        public async Task<Plugin> UploadPluginWithTagsAsync(IFormFile pluginFile, string pluginName, string pluginDescription, string githubUrl, List<int> tagIds, string userId, IFormFile backgroundImage)
+        {
+            if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
+            {
+                var fileName = Path.GetFileName(pluginFile.FileName);
+                var filePath = Path.Combine(_uploadPath, fileName);
+
+                if (File.Exists(filePath))
+                {
+                    return null;
+                }
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await pluginFile.CopyToAsync(fileStream);
+                }
+
+                var plugin = new Plugin
+                {
+                    Name = pluginName,
+                    Description = pluginDescription,
+                    FilePath = filePath,
+                    FileName = pluginFile.FileName,
+                    UploadedAt = DateTime.Now,
+                    Version = "1.0",
+                    AuthorId = userId,
+                    PluginTags = new List<PluginTag>()
+                };
+
+
 
                 if (tagIds != null && tagIds.Count > 0)
                 {

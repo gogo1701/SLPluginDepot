@@ -8,8 +8,6 @@ namespace SLPluginDepotServices.Interfaces
         Task<IEnumerable<Plugin>> GetPluginsFromQueryAsync(string query);
         Task<IEnumerable<Plugin>> GetPluginsAsync();
         Task<bool> UploadPluginAsync(IFormFile pluginFile, string pluginName, string pluginDescription, string userId);
-
-        
         Task<Plugin> UploadPluginWithTagsAsync(
             IFormFile pluginFile,
             string pluginName,

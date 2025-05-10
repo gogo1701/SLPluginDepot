@@ -1,4 +1,5 @@
 ﻿@model SLPluginDepotModels.Models.PluginDetailsView
+@using System.IO
 
 @{
     ViewData["Title"] = "Plugin Details";
@@ -149,8 +150,9 @@
                 }
             </div>
 
+            <!-- Download Plugin Section -->
             <div class="text-center mt-4">
-                <a href="@Url.Content(Model.Plugin.FilePath)" class="btn btn-primary" download>Download Plugin</a>
+                <a href="@Url.Action("DownloadPlugin", "Plugin", new { id = Model.Plugin.Id })" class="btn btn-primary">Download Plugin</a>
             </div>
         </section>
 

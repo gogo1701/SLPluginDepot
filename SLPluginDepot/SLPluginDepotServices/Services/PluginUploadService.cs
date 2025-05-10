@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SLPluginDepotDB;
 using SLPluginDepotModels.Models;
 using SLPluginDepotServices.Interfaces;
@@ -59,13 +58,8 @@ namespace SLPluginDepotServices.Services
         {
             if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
             {
-                var fileName = Path.GetFileName(pluginFile.FileName);
-                var filePath = Path.Combine(_uploadPath, fileName);
-
-                if (File.Exists(filePath))
-                {
-                    return false;
-                }
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(pluginFile.FileName)}";
+                var filePath = Path.Combine(_uploadPath, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
@@ -76,8 +70,8 @@ namespace SLPluginDepotServices.Services
                 {
                     Name = pluginName,
                     Description = pluginDescription,
-                    FilePath = filePath,
-                    FileName = pluginFile.FileName,
+                    FilePath = "/uploads/" + uniqueFileName, // Web-accessible path
+                    FileName = uniqueFileName,
                     UploadedAt = DateTime.Now,
                     Version = "1.0",
                     AuthorId = userId
@@ -103,15 +97,10 @@ namespace SLPluginDepotServices.Services
         {
             if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
             {
-                var fileName = Path.GetFileName(pluginFile.FileName);
-                var filePath = Path.Combine(_uploadPath, fileName);
+                var uniquePluginFileName = $"{Guid.NewGuid()}_{Path.GetFileName(pluginFile.FileName)}";
+                var pluginFilePath = Path.Combine(_uploadPath, uniquePluginFileName);
 
-                if (File.Exists(filePath))
-                {
-                    return null;
-                }
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var fileStream = new FileStream(pluginFilePath, FileMode.Create))
                 {
                     await pluginFile.CopyToAsync(fileStream);
                 }
@@ -120,29 +109,30 @@ namespace SLPluginDepotServices.Services
                 {
                     Name = pluginName,
                     Description = pluginDescription,
-                    FilePath = filePath,
-                    FileName = pluginFile.FileName,
+                    FilePath = "/uploads/" + uniquePluginFileName, // Web-accessible
+                    FileName = uniquePluginFileName,
                     UploadedAt = DateTime.Now,
                     Version = "1.0",
                     AuthorId = userId,
+                    GitHubUrl = githubUrl,
                     PluginTags = new List<PluginTag>()
                 };
 
-                
+                // Handle background image
                 if (backgroundImage != null && backgroundImage.Length > 0)
                 {
-                    var imageFileName = Path.GetFileName(backgroundImage.FileName);
-                    var imagePath = Path.Combine(_uploadPath, imageFileName);
+                    var uniqueImageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(backgroundImage.FileName)}";
+                    var imagePath = Path.Combine(_uploadPath, uniqueImageFileName);
 
                     using (var imageStream = new FileStream(imagePath, FileMode.Create))
                     {
                         await backgroundImage.CopyToAsync(imageStream);
                     }
 
-                    plugin.BackgroundImageUrl = imagePath; 
+                    plugin.BackgroundImageUrl = "/uploads/" + uniqueImageFileName; // Web-accessible
                 }
 
-                
+                // Handle tags
                 if (tagIds != null && tagIds.Count > 0)
                 {
                     var tags = _context.PluginTags.Where(t => tagIds.Contains(t.Id)).ToList();
@@ -156,7 +146,6 @@ namespace SLPluginDepotServices.Services
             }
 
             return null;
-           
         }
     }
 }

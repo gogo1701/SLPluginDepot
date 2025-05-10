@@ -10,6 +10,7 @@ namespace SLPluginDepotWeb.Controllers
         private readonly IPluginService _pluginService;
         private readonly IPluginUploadService _pluginUploadService;
         private readonly IRatingService _ratingService;
+        private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
         public PluginController(IPluginService pluginService, IPluginUploadService pluginUploadService, IRatingService ratingService)
         {
@@ -23,6 +24,29 @@ namespace SLPluginDepotWeb.Controllers
         {
             var plugins = _pluginService.GetPlugins();
             return View(plugins);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadPlugin(int id)
+        {
+            var plugin = await _pluginService.GetPluginByIdAsync(id);
+
+            if (plugin == null)
+            {
+                return NotFound();
+            }
+
+            var filePath = plugin.FilePath;
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            var fileName = Path.GetFileName(filePath);
+
+            return File(fileBytes, "application/octet-stream", fileName);
         }
 
         [HttpGet]

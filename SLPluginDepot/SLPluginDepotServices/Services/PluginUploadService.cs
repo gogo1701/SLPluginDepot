@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SLPluginDepotDB;
 using SLPluginDepotModels.Models;
 using SLPluginDepotServices.Interfaces;
@@ -91,7 +92,6 @@ namespace SLPluginDepotServices.Services
             return false;
         }
 
-        // Implementing the method with the new backgroundImage parameter
         public async Task<Plugin> UploadPluginWithTagsAsync(
             IFormFile pluginFile,
             string pluginName,
@@ -156,6 +156,7 @@ namespace SLPluginDepotServices.Services
             }
 
             return null;
+           
         }
     }
 }

@@ -1,0 +1,161 @@
+﻿@model SLPluginDepotModels.Models.PluginDetailsView
+
+@{
+    ViewData["Title"] = "Plugin Details";
+}
+
+<style>
+    .star-rating-wrapper {
+        position: relative;
+        display: inline-block;
+        font-size: 2.5rem;
+        unicode-bidi: bidi-override;
+        direction: rtl;
+    }
+
+        .star-rating-wrapper input {
+            display: none;
+        }
+
+        .star-rating-wrapper label {
+            display: inline-block;
+            position: relative;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+            .star-rating-wrapper label:before {
+                content: "\2605"; /* star */
+                position: absolute;
+                left: 0;
+            }
+
+            .star-rating-wrapper label.full:hover:before,
+            .star-rating-wrapper label.full:hover ~ label:before,
+            .star-rating-wrapper input:checked ~ label.full:before {
+                color: #ffc107;
+            }
+
+            .star-rating-wrapper label.half:before {
+                content: "\2605";
+                width: 50%;
+                overflow: hidden;
+                position: absolute;
+                z-index: 1;
+            }
+
+            .star-rating-wrapper label.half:hover:before,
+            .star-rating-wrapper label.half:hover ~ label:before,
+            .star-rating-wrapper input:checked ~ label.half:before {
+                color: #ffc107;
+            }
+
+        .star-rating-wrapper input:checked ~ label:before {
+            color: #ffc107;
+        }
+
+        .star-rating-wrapper label:hover ~ label:before {
+            color: #ffc107;
+        }
+</style>
+
+<div class="container my-5">
+    <div class="card shadow rounded-4 p-4">
+        <h2 class="text-center mb-4">@Model.Plugin.Name</h2>
+
+        <!-- Rating Section -->
+        <section class="mb-5">
+            <h4 class="mb-3">Rate this Plugin</h4>
+            <form method="post" asp-controller="Plugin" asp-action="RatePlugin" asp-route-id="@Model.Plugin.Id" id="ratingForm">
+                <div class="mb-3">
+                    <label class="form-label">Your Rating</label>
+                    <div class="star-rating-wrapper" id="starRating">
+                        @for (int i = 10; i >= 1; i--)
+                        {
+                            var value = (i / 2.0).ToString("0.0");
+                            var id = $"star{value.Replace(".", "_")}";
+                            var labelClass = i % 2 == 0 ? "full" : "half";
+                            <input type="radio" id="@id" name="rating" value="@value" />
+                            <label for="@id" class="@labelClass" title="@value stars"></label>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="review" class="form-label">Review</label>
+                    <textarea name="review" id="review" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Rating</button>
+            </form>
+        </section>
+
+        <!-- Plugin Details Section -->
+        <section>
+            @if (!string.IsNullOrEmpty(Model.Plugin.BackgroundImageUrl))
+            {
+                <div class="mb-4">
+                    <img src="@Model.Plugin.BackgroundImageUrl" alt="Plugin Image" class="img-fluid rounded" />
+                </div>
+            }
+
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>@Model.Plugin.Description</p>
+            </div>
+
+            <div class="mb-4">
+                <h5>Author</h5>
+                <p>@Model.Plugin.Author.UserName</p>
+            </div>
+
+            <div class="mb-4">
+                <h5>GitHub Repo</h5>
+                @if (!string.IsNullOrEmpty(Model.Plugin.GitHubUrl))
+                {
+                    <a href="@Model.Plugin.GitHubUrl" target="_blank" class="btn btn-outline-dark btn-sm">View GitHub Repo</a>
+                }
+                else
+                {
+                    <p class="text-muted">No GitHub link provided</p>
+                }
+            </div>
+
+            <div class="mb-4">
+                <h5>Rating</h5>
+                @if (Model.Ratings != null && Model.Ratings.Any())
+                {
+                    <span class="badge bg-primary fs-6">Average Rating: @Model.AverageRating.ToString("0.0")</span>
+                }
+                else
+                {
+                    <span class="text-muted">No ratings yet</span>
+                }
+            </div>
+
+            <div class="mb-4">
+                <h5>Tags</h5>
+                @if (Model.Plugin.PluginTags.Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var tag in Model.Plugin.PluginTags)
+                        {
+                            <span class="badge bg-secondary">@tag.Name</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No tags available</p>
+                }
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="@Url.Content(Model.Plugin.FilePath)" class="btn btn-primary" download>Download Plugin</a>
+            </div>
+        </section>
+
+        <div class="text-center mt-5">
+            <a href="@Url.Action("Index", "Plugin")" class="btn btn-outline-secondary">Back to Plugin Browser</a>
+        </div>
+    </div>
+</div>

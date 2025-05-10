@@ -26,6 +26,7 @@ public class Program
 
         builder.Services.AddScoped<IPluginService, PluginService>();
         builder.Services.AddScoped<IPluginUploadService, PluginUploadService>();
+        builder.Services.AddScoped<IRatingService, RatingService>();
 
         var app = builder.Build();
 

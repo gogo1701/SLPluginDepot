@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SLPluginDepotModels.Models.Plugin>
+﻿@model IEnumerable<Plugin>
 
 @{
     ViewData["Title"] = "Plugin Browser";
@@ -14,30 +14,64 @@
     </div>
 </form>
 
-<!-- Display Search Results if any -->
+<!-- Display Plugins -->
 @if (Model != null && Model.Any())
 {
-    <h4>Search Results:</h4>
     <div class="plugin-grid">
         @foreach (var plugin in Model)
         {
-            <div class="plugin-card" style="background-image: url('@plugin.BackgroundImageUrl');">
-                <div class="plugin-details">
-                    <h3>@plugin.Name</h3>
-                    <p>Rating: @plugin.Rating</p>
+            <a href="@Url.Action("Details", "Plugin", new { id = plugin.Id })" class="plugin-card-link">
+                <div class="plugin-card" style="background-image: url('@plugin.BackgroundImageUrl'); background-size: cover; background-position: center;">
+                    <div class="plugin-overlay">
+                        <h3>@plugin.Name</h3>
+                        <p>Rating: @(plugin.Ratings?.Any() == true ? plugin.Ratings.Average(r => r.Stars).ToString("0.0") : "No ratings")</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         }
     </div>
 }
-else if (Model != null && !Model.Any())
+else if (Model != null)
 {
     <p>No plugins found matching your query.</p>
 }
 
 <!-- Button to Add New Plugin -->
 <div class="mt-4">
-    <form method="post" asp-controller="Plugin" asp-action="AddPlugin">
-        <button type="submit" class="btn btn-success">Add New Plugin</button>
-    </form>
+    <a href="@Url.Action("AddPlugin", "Plugin")" class="btn btn-success">Add New Plugin</a>
 </div>
+
+<style>
+    .plugin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .plugin-card-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .plugin-card {
+        height: 200px;
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: transform 0.2s;
+    }
+
+        .plugin-card:hover {
+            transform: scale(1.03);
+        }
+
+    .plugin-overlay {
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 10px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+</style>

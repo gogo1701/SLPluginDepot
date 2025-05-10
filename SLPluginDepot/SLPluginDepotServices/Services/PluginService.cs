@@ -31,6 +31,15 @@ namespace SLPluginDepotServices.Services
             return pluginsQuery;
         }
 
+        public async Task<Plugin> GetPluginByIdAsync(int id)
+        {
+            return await _context.Plugins
+                .Include(p => p.Author)
+                .Include(p => p.PluginTags)
+                .Include(p => p.Ratings)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
         public IEnumerable<Plugin> GetPlugins()
         {
             var pluginsQuery = _context.Plugins

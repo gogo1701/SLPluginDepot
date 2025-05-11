@@ -85,10 +85,6 @@ namespace SLPluginDepotWeb.Controllers
             return View(viewModel);
         }
 
-
-
-
-
         [HttpPost]
         public async Task<IActionResult> RatePlugin(int id, double rating, string review)
         {
@@ -110,12 +106,6 @@ namespace SLPluginDepotWeb.Controllers
             var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
             if (!userExists)
             {
-                PluginId = plugin.Id,
-                UserId = userId,
-                Stars = rating,
-                Review = null,
-                RatedAt = DateTime.UtcNow
-            };
                 return Unauthorized("User does not exist in the system.");
             }
 
@@ -124,28 +114,17 @@ namespace SLPluginDepotWeb.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
-
-
-
-
-
-
-
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPlugin(
-    IFormFile pluginFile,
-    string pluginName,
-    string pluginDescription,
-    string githubUrl,
-    List<int> selectedTags,
-    IFormFile backgroundImage)
+            IFormFile pluginFile,
+            string pluginName,
+            string pluginDescription,
+            string githubUrl,
+            List<int> selectedTags,
+            IFormFile backgroundImage)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
 
             var result = await _pluginUploadService.UploadPluginWithTagsAsync(
                 pluginFile,
@@ -167,10 +146,6 @@ namespace SLPluginDepotWeb.Controllers
             ViewBag.AvailableTags = _pluginService.GetAllTags();
             return View();
         }
-
-
-
-
 
         [HttpGet]
         public IActionResult Search(string query)

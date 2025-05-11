@@ -1,14 +1,7 @@
-﻿using SLPluginDepotDB;
+﻿using Microsoft.EntityFrameworkCore;
+using SLPluginDepotDB;
 using SLPluginDepotModels.Models;
 using SLPluginDepotServices.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace SLPluginDepotServices.Services
 {
@@ -25,7 +18,7 @@ namespace SLPluginDepotServices.Services
             {
                 Directory.CreateDirectory(_uploadPath);
             }
-            
+
         }
 
         public async Task<IEnumerable<Plugin>> GetPluginsFromQueryAsync(string query)

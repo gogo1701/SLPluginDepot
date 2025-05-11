@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using SLPluginDepotServices.Interfaces;
 using SLPluginDepotModels.Models;
+using SLPluginDepotServices.Interfaces;
 
 namespace SLPluginDepotWeb.Controllers
 {
@@ -101,7 +100,7 @@ namespace SLPluginDepotWeb.Controllers
                 PluginId = plugin.Id,
                 UserId = userId,
                 Stars = rating,
-                Review = null,  
+                Review = null,
                 RatedAt = DateTime.UtcNow
             };
 

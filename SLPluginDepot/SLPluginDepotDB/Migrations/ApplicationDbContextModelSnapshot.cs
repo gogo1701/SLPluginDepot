@@ -167,7 +167,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("PluginsId");
 
-                    b.ToTable("PluginPluginTag");
+                    b.ToTable("PluginPluginTag", (string)null);
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.ApplicationUser", b =>
@@ -292,7 +292,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Plugins");
+                    b.ToTable("Plugins", (string)null);
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginDownload", b =>
@@ -308,7 +308,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PluginDownloads");
+                    b.ToTable("PluginDownloads", (string)null);
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginRating", b =>
@@ -342,7 +342,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PluginRatings");
+                    b.ToTable("PluginRatings", (string)null);
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginTag", b =>
@@ -359,7 +359,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PluginTags");
+                    b.ToTable("PluginTags", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

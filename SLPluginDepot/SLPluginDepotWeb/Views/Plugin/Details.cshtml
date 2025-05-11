@@ -26,7 +26,7 @@
         }
 
             .star-rating-wrapper label:before {
-                content: "\2605"; /* star */
+                content: "\2605";
                 position: absolute;
                 left: 0;
             }
@@ -63,32 +63,6 @@
 <div class="container my-5">
     <div class="card shadow rounded-4 p-4">
         <h2 class="text-center mb-4">@Model.Plugin.Name</h2>
-
-        <!-- Rating Section -->
-        <section class="mb-5">
-            <h4 class="mb-3">Rate this Plugin</h4>
-            <form method="post" asp-controller="Plugin" asp-action="RatePlugin" asp-route-id="@Model.Plugin.Id" id="ratingForm">
-                <div class="mb-3">
-                    <label class="form-label">Your Rating</label>
-                    <div class="star-rating-wrapper" id="starRating">
-                        @for (int i = 10; i >= 1; i--)
-                        {
-                            var value = (i / 2.0).ToString("0.0");
-                            var id = $"star{value.Replace(".", "_")}";
-                            var labelClass = i % 2 == 0 ? "full" : "half";
-                            <input type="radio" id="@id" name="rating" value="@value" />
-                            <label for="@id" class="@labelClass" title="@value stars"></label>
-                        }
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="review" class="form-label">Review</label>
-                    <textarea name="review" id="review" class="form-control" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">Submit Rating</button>
-            </form>
-        </section>
 
         <!-- Plugin Details Section -->
         <section>
@@ -156,8 +130,52 @@
             </div>
         </section>
 
-        <div class="text-center mt-5">
-            <a href="@Url.Action("Index", "Plugin")" class="btn btn-outline-secondary">Back to Plugin Browser</a>
-        </div>
+        <!-- Review Form at Bottom -->
+        <hr class="my-5" />
+        <section class="mt-5">
+            <h4 class="mb-3">Leave a Review</h4>
+            <form method="post" asp-controller="Plugin" asp-action="RatePlugin" asp-route-id="@Model.Plugin.Id" id="ratingForm">
+                <div class="mb-3">
+                    <label class="form-label">Your Rating</label>
+                    <div class="star-rating-wrapper" id="starRating">
+                        @for (int i = 10; i >= 1; i--)
+                        {
+                            var value = (i / 2.0).ToString("0.0");
+                            var id = $"star{value.Replace(".", "_")}";
+                            var labelClass = i % 2 == 0 ? "full" : "half";
+                            <input type="radio" id="@id" name="rating" value="@value" />
+                            <label for="@id" class="@labelClass" title="@value stars"></label>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="review" class="form-label">Review</label>
+                    <textarea name="review" id="review" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Review</button>
+            </form>
+        </section>
+
+        <!-- Comment Section -->
+        @if (Model.Ratings != null && Model.Ratings.Any())
+        {
+            <section class="mt-5">
+                <h4 class="mb-4">User Reviews</h4>
+                @foreach (var rating in Model.Ratings.OrderByDescending(r => r.RatedAt))
+                {
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <strong>@rating.User.UserName</strong>
+                            <small class="text-muted">@rating.RatedAt.ToString("g")</small>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-warning fw-bold">@rating.Stars.ToString("0.0")</span> ★
+                        </div>
+                        <p>@rating.Review</p>
+                    </div>
+                }
+            </section>
+        }
     </div>
 </div>

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SLPluginDepotModels.Models;
 using SLPluginDepotServices.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using SLPluginDepotDB;
+using System.Security.Claims;
 
 namespace SLPluginDepotWeb.Controllers
 {
@@ -9,13 +12,15 @@ namespace SLPluginDepotWeb.Controllers
         private readonly IPluginService _pluginService;
         private readonly IPluginUploadService _pluginUploadService;
         private readonly IRatingService _ratingService;
+        private readonly ApplicationDbContext _context;
         private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-        public PluginController(IPluginService pluginService, IPluginUploadService pluginUploadService, IRatingService ratingService)
+        public PluginController(IPluginService pluginService, IPluginUploadService pluginUploadService, IRatingService ratingService, ApplicationDbContext context)
         {
             _pluginService = pluginService;
             _pluginUploadService = pluginUploadService;
             _ratingService = ratingService;
+            _context = context;
         }
 
         [HttpGet]
@@ -85,9 +90,15 @@ namespace SLPluginDepotWeb.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> RatePlugin(int id, int rating)
+        public async Task<IActionResult> RatePlugin(int id, double rating, string review)
         {
-            var userId = User.Identity?.Name ?? "demo-user";
+            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier); // Get user ID from claims
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Handle the case where the user is not authenticated or no userId is found
+                return Unauthorized("You must be logged in to rate this plugin.");
+            }
+
             var plugin = await _pluginService.GetPluginByIdAsync(id);
 
             if (plugin == null)
@@ -95,7 +106,9 @@ namespace SLPluginDepotWeb.Controllers
                 return NotFound();
             }
 
-            var pluginRating = new PluginRating
+            // Check if the user exists in the AspNetUsers table
+            var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userExists)
             {
                 PluginId = plugin.Id,
                 UserId = userId,
@@ -103,11 +116,18 @@ namespace SLPluginDepotWeb.Controllers
                 Review = null,
                 RatedAt = DateTime.UtcNow
             };
+                return Unauthorized("User does not exist in the system.");
+            }
 
-            await _ratingService.AddRatingAsync(plugin, userId, rating);
+            await _ratingService.AddRatingAsync(plugin, userId, rating, review);
 
             return RedirectToAction("Details", new { id = id });
         }
+
+
+
+
+
 
 
 

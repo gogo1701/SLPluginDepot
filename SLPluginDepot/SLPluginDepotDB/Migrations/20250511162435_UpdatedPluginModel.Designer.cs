@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SLPluginDepotDB;
 
@@ -11,9 +12,11 @@ using SLPluginDepotDB;
 namespace SLPluginDepotDB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511162435_UpdatedPluginModel")]
+    partial class UpdatedPluginModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,7 +170,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("PluginsId");
 
-                    b.ToTable("PluginPluginTag", (string)null);
+                    b.ToTable("PluginPluginTag");
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.ApplicationUser", b =>
@@ -292,7 +295,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Plugins", (string)null);
+                    b.ToTable("Plugins");
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginDownload", b =>
@@ -308,7 +311,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PluginDownloads", (string)null);
+                    b.ToTable("PluginDownloads");
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginRating", b =>
@@ -342,7 +345,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PluginRatings", (string)null);
+                    b.ToTable("PluginRatings");
                 });
 
             modelBuilder.Entity("SLPluginDepotModels.Models.PluginTag", b =>
@@ -359,7 +362,7 @@ namespace SLPluginDepotDB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PluginTags", (string)null);
+                    b.ToTable("PluginTags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

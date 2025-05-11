@@ -21,7 +21,7 @@ namespace SLPluginDepotServices.Services
                 .Where(r => r.PluginId == pluginId)
                 .ToListAsync();
         }
-        public async Task AddRatingAsync(Plugin plugin, string userId, int rating)
+        public async Task AddRatingAsync(Plugin plugin, string userId, double rating, string review)
         {
             if (rating < 1 || rating > 5)
                 throw new ArgumentException("Rating must be between 1 and 5.");
@@ -32,6 +32,7 @@ namespace SLPluginDepotServices.Services
             if (existingRating != null)
             {
                 existingRating.Stars = rating;
+                existingRating.Review = review;
                 existingRating.RatedAt = DateTime.Now;
                 _context.PluginRatings.Update(existingRating);
             }
@@ -42,6 +43,7 @@ namespace SLPluginDepotServices.Services
                     PluginId = plugin.Id,
                     UserId = userId,
                     Stars = rating,
+                    Review = review,
                     RatedAt = DateTime.Now
                 };
                 _context.PluginRatings.Add(newRating);
@@ -49,5 +51,7 @@ namespace SLPluginDepotServices.Services
 
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

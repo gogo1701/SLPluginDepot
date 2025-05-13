@@ -7,5 +7,9 @@ namespace SLPluginDepotServices.Interfaces
     {
         Task AddRatingAsync(Plugin plugin, string userId, double rating, string review);
         Task<IEnumerable<PluginRating>> GetRatingsForPluginAsync(int pluginId);
+
+        Task EditRatingAsync(int ratingId, double stars, string review);
+
+        Task DeleteRatingAsync(int ratingId);
     }
 }

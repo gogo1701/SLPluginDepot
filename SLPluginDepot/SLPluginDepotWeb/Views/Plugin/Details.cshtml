@@ -1,181 +1,198 @@
 ﻿@model SLPluginDepotModels.Models.PluginDetailsView
 @using System.IO
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Plugin Details";
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 }
 
-<style>
-    .star-rating-wrapper {
-        position: relative;
-        display: inline-block;
-        font-size: 2.5rem;
-        unicode-bidi: bidi-override;
-        direction: rtl;
-    }
-
-        .star-rating-wrapper input {
-            display: none;
-        }
-
-        .star-rating-wrapper label {
-            display: inline-block;
-            position: relative;
-            color: #ccc;
-            cursor: pointer;
-        }
-
-            .star-rating-wrapper label:before {
-                content: "\2605";
-                position: absolute;
-                left: 0;
-            }
-
-            .star-rating-wrapper label.full:hover:before,
-            .star-rating-wrapper label.full:hover ~ label:before,
-            .star-rating-wrapper input:checked ~ label.full:before {
-                color: #ffc107;
-            }
-
-            .star-rating-wrapper label.half:before {
-                content: "\2605";
-                width: 50%;
-                overflow: hidden;
-                position: absolute;
-                z-index: 1;
-            }
-
-            .star-rating-wrapper label.half:hover:before,
-            .star-rating-wrapper label.half:hover ~ label:before,
-            .star-rating-wrapper input:checked ~ label.half:before {
-                color: #ffc107;
-            }
-
-        .star-rating-wrapper input:checked ~ label:before {
-            color: #ffc107;
-        }
-
-        .star-rating-wrapper label:hover ~ label:before {
-            color: #ffc107;
-        }
-</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <div class="container my-5">
     <div class="card shadow rounded-4 p-4">
         <h2 class="text-center mb-4">@Model.Plugin.Name</h2>
 
-        <!-- Plugin Details Section -->
+        <!-- Plugin Info -->
         <section>
             @if (!string.IsNullOrEmpty(Model.Plugin.BackgroundImageUrl))
             {
-                <div class="mb-4">
-                    <img src="@Model.Plugin.BackgroundImageUrl" alt="Plugin Image" class="img-fluid rounded" />
-                </div>
+                <img src="@Model.Plugin.BackgroundImageUrl" alt="Plugin Image" class="img-fluid rounded mb-3" />
             }
 
-            <div class="mb-4">
-                <h5>Description</h5>
-                <p>@Model.Plugin.Description</p>
-            </div>
+            <p><strong>Description:</strong> @Model.Plugin.Description</p>
+            <p><strong>Author:</strong> @Model.Plugin.Author.UserName</p>
 
-            <div class="mb-4">
-                <h5>Author</h5>
-                <p>@Model.Plugin.Author.UserName</p>
-            </div>
+            @if (!string.IsNullOrEmpty(Model.Plugin.GitHubUrl))
+            {
+                <p><a href="@Model.Plugin.GitHubUrl" target="_blank" class="btn btn-sm btn-outline-dark">GitHub</a></p>
+            }
 
-            <div class="mb-4">
-                <h5>GitHub Repo</h5>
-                @if (!string.IsNullOrEmpty(Model.Plugin.GitHubUrl))
+            <p>
+                <strong>Tags:</strong>
+                @if (Model.Plugin.PluginTags.Any())
                 {
-                    <a href="@Model.Plugin.GitHubUrl" target="_blank" class="btn btn-outline-dark btn-sm">View GitHub Repo</a>
+                    @foreach (var tag in Model.Plugin.PluginTags)
+                    {
+                        <span class="badge bg-secondary me-1">@tag.Name</span>
+                    }
                 }
                 else
                 {
-                    <p class="text-muted">No GitHub link provided</p>
+                    <span class="text-muted">No tags</span>
                 }
-            </div>
+            </p>
 
-            <div class="mb-4">
-                <h5>Rating</h5>
-                @if (Model.Ratings != null && Model.Ratings.Any())
+            <p>
+                <strong>Average Rating:</strong>
+                @if (Model.Ratings.Any())
                 {
-                    <span class="badge bg-primary fs-6">Average Rating: @Model.AverageRating.ToString("0.0")</span>
+                    <span class="text-warning fw-bold">@Model.AverageRating.ToString("0.0") ★</span>
                 }
                 else
                 {
                     <span class="text-muted">No ratings yet</span>
                 }
-            </div>
+            </p>
 
-            <div class="mb-4">
-                <h5>Tags</h5>
-                @if (Model.Plugin.PluginTags.Any())
-                {
-                    <div class="d-flex flex-wrap gap-2">
-                        @foreach (var tag in Model.Plugin.PluginTags)
-                        {
-                            <span class="badge bg-secondary">@tag.Name</span>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted">No tags available</p>
-                }
-            </div>
-
-            <!-- Download Plugin Section -->
-            <div class="text-center mt-4">
-                <a href="@Url.Action("DownloadPlugin", "Plugin", new { id = Model.Plugin.Id })" class="btn btn-primary">Download Plugin</a>
-            </div>
+            <a href="@Url.Action("DownloadPlugin", "Plugin", new { id = Model.Plugin.Id })" class="btn btn-primary">Download Plugin</a>
         </section>
 
-        <!-- Review Form at Bottom -->
-        <hr class="my-5" />
-        <section class="mt-5">
-            <h4 class="mb-3">Leave a Review</h4>
-            <form method="post" asp-controller="Plugin" asp-action="RatePlugin" asp-route-id="@Model.Plugin.Id" id="ratingForm">
-                <div class="mb-3">
-                    <label class="form-label">Your Rating</label>
-                    <div class="star-rating-wrapper" id="starRating">
-                        @for (int i = 10; i >= 1; i--)
-                        {
-                            var value = (i / 2.0).ToString("0.0");
-                            var id = $"star{value.Replace(".", "_")}";
-                            var labelClass = i % 2 == 0 ? "full" : "half";
-                            <input type="radio" id="@id" name="rating" value="@value" />
-                            <label for="@id" class="@labelClass" title="@value stars"></label>
-                        }
-                    </div>
-                </div>
+        <hr class="my-4" />
 
-                <div class="mb-3">
-                    <label for="review" class="form-label">Review</label>
-                    <textarea name="review" id="review" class="form-control" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">Submit Review</button>
-            </form>
-        </section>
-
-        <!-- Comment Section -->
-        @if (Model.Ratings != null && Model.Ratings.Any())
+        <!-- Leave New Review -->
+        @if (User.Identity.IsAuthenticated)
         {
-            <section class="mt-5">
-                <h4 class="mb-4">User Reviews</h4>
-                @foreach (var rating in Model.Ratings.OrderByDescending(r => r.RatedAt))
-                {
-                    <div class="border rounded p-3 mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <strong>@rating.User.UserName</strong>
-                            <small class="text-muted">@rating.RatedAt.ToString("g")</small>
-                        </div>
-                        <div class="mb-2">
-                            <span class="text-warning fw-bold">@rating.Stars.ToString("0.0")</span> ★
-                        </div>
-                        <p>@rating.Review</p>
+            <section>
+                <h4>Leave a Comment</h4>
+                <form id="newReviewForm">
+                    <input type="hidden" name="pluginId" value="@Model.Plugin.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <select name="stars" class="form-select w-auto">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <option value="@i">@i ★</option>
+                            }
+                        </select>
                     </div>
-                }
+
+                    <div class="mb-3">
+                        <label for="review" class="form-label">Your Comment</label>
+                        <textarea name="review" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Post Comment</button>
+                </form>
             </section>
         }
+        else
+        {
+            <p class="text-muted">You must be logged in to leave a comment.</p>
+        }
+
+        <!-- Display Comments -->
+        <section class="mt-5">
+            <h4>User Reviews</h4>
+            @if (Model.Ratings.Any())
+            {
+                <div id="commentSection">
+                    @foreach (var rating in Model.Ratings.OrderByDescending(r => r.RatedAt))
+                    {
+                        <div class="border p-3 rounded mb-3" data-review-id="@rating.Id">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>@rating.User.UserName</strong>
+                                    <span class="text-warning ms-2">@rating.Stars ★</span>
+                                </div>
+                                <small class="text-muted">@rating.RatedAt.ToString("g")</small>
+                            </div>
+                            <p>@rating.Review</p>
+
+                            @if (rating.UserId == userId)
+                            {
+                                <button class="btn btn-sm btn-outline-primary edit-review-btn" data-id="@rating.Id"
+                                        data-stars="@rating.Stars" data-review="@rating.Review">
+                                    Edit
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No comments yet.</p>
+            }
+        </section>
     </div>
 </div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editReviewForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editReviewLabel">Edit Your Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="reviewId" id="editReviewId" />
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select name="stars" class="form-select" id="editStars">
+                        @for (int i = 5; i >= 1; i--)
+                        {
+                            <option value="@i">@i ★</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Review</label>
+                    <textarea name="review" class="form-control" rows="3" id="editReviewText" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Post new comment
+    $("#newReviewForm").submit(function (e) {
+        e.preventDefault();
+
+        $.post("/Plugin/AddComment", $(this).serialize())
+            .done(() => location.reload())
+            .fail(err => alert("Error submitting comment"));
+    });
+
+    // Launch edit modal
+    $(".edit-review-btn").click(function () {
+        const id = $(this).data("id");
+        const stars = $(this).data("stars");
+        const review = $(this).data("review");
+
+        $("#editReviewId").val(id);
+        $("#editStars").val(stars);
+        $("#editReviewText").val(review);
+
+        new bootstrap.Modal(document.getElementById("editReviewModal")).show();
+    });
+
+    // Submit edit form
+    $("#editReviewForm").submit(function (e) {
+        e.preventDefault();
+
+        $.post("/Plugin/EditComment", $(this).serialize())
+            .done(() => location.reload())
+            .fail(() => alert("Error updating comment"));
+    });
+</script>

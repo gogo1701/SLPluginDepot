@@ -21,6 +21,28 @@ namespace SLPluginDepotServices.Services
                 .Where(r => r.PluginId == pluginId)
                 .ToListAsync();
         }
+        public async Task EditRatingAsync(int ratingId, double stars, string review)
+        {
+            var rating = await _context.PluginRatings.FindAsync(ratingId);
+            if (rating != null)
+            {
+                rating.Stars = stars;
+                rating.Review = review;
+                rating.RatedAt = DateTime.Now;
+                _context.PluginRatings.Update(rating);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteRatingAsync(int ratingId)
+        {
+            var rating = await _context.PluginRatings.FindAsync(ratingId);
+            if (rating != null)
+            {
+                _context.PluginRatings.Remove(rating);
+                await _context.SaveChangesAsync();
+            }
+        }
         public async Task AddRatingAsync(Plugin plugin, string userId, double rating, string review)
         {
             if (rating < 1 || rating > 5)

@@ -17,13 +17,13 @@ namespace SLPluginDepotDB
 
             modelBuilder.Entity<Plugin>()
                 .HasMany(p => p.PluginTags);
-                
+
 
             modelBuilder.Entity<PluginRating>()
     .HasOne(pr => pr.Plugin)
     .WithMany(p => p.Ratings)
     .HasForeignKey(pr => pr.PluginId)
-    .OnDelete(DeleteBehavior.Restrict); 
+    .OnDelete(DeleteBehavior.Restrict);
 
 
         }

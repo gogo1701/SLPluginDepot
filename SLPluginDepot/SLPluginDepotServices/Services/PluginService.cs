@@ -24,12 +24,17 @@ namespace SLPluginDepotServices.Services
 
             if (!string.IsNullOrWhiteSpace(query))
             {
+                var loweredQuery = query.ToLower();
+
                 pluginsQuery = pluginsQuery.Where(p =>
-                    p.Name.Contains(query) || p.Description.Contains(query));
+                    EF.Functions.Like(p.Name.ToLower(), $"%{loweredQuery}%") ||
+                    EF.Functions.Like(p.Description.ToLower(), $"%{loweredQuery}%"));
             }
 
-            return pluginsQuery;
+            return pluginsQuery.ToList(); 
+            
         }
+
 
         public async Task<Plugin> GetPluginByIdAsync(int id)
         {

@@ -70,7 +70,7 @@ namespace SLPluginDepotServices.Services
                 {
                     Name = pluginName,
                     Description = pluginDescription,
-                    FilePath = "/uploads/" + uniqueFileName, // Web-accessible path
+                    FilePath = "/uploads/" + uniqueFileName, 
                     FileName = uniqueFileName,
                     UploadedAt = DateTime.Now,
                     Version = "1.0",

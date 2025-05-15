@@ -215,6 +215,25 @@ namespace SLPluginDepotWeb.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditComment(int reviewId, int stars, string review)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var rating = await _context.PluginRatings.FirstOrDefaultAsync(r => r.Id == reviewId && r.UserId == userId);
+            if (rating == null)
+                return Unauthorized();
+
+            rating.Stars = stars;
+            rating.Review = review;
+            rating.RatedAt = DateTime.Now; 
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
 
     }
 }

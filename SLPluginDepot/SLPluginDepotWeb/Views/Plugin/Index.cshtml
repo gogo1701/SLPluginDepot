@@ -1,47 +1,22 @@
-﻿@model IEnumerable<Plugin>
+﻿@model IEnumerable<SLPluginDepotModels.Models.Plugin>
 
 @{
     ViewData["Title"] = "Plugin Browser";
 }
 
-<h2>Search for Plugins in here!</h2>
-
-<!-- Search Bar -->
-<form method="get" asp-controller="Plugin" asp-action="Search" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="query" class="form-control" placeholder="Enter plugin name..." />
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-</form>
-
-<!-- Display Plugins -->
-@if (Model != null && Model.Any())
-{
-    <div class="plugin-grid">
-        @foreach (var plugin in Model)
-        {
-            <a href="@Url.Action("Details", "Plugin", new { id = plugin.Id })" class="plugin-card-link">
-                <div class="plugin-card" style="background-image: url('@plugin.BackgroundImageUrl'); background-size: cover; background-position: center;">
-                    <div class="plugin-overlay">
-                        <h3>@plugin.Name</h3>
-                        <p>Rating: @(plugin.Ratings?.Any() == true ? plugin.Ratings.Average(r => r.Stars).ToString("0.0") : "No ratings")</p>
-                    </div>
-                </div>
-            </a>
-        }
-    </div>
-}
-else if (Model != null)
-{
-    <p>No plugins found matching your query.</p>
-}
-
-<!-- Button to Add New Plugin -->
-<div class="mt-4">
-    <a href="@Url.Action("AddPlugin", "Plugin")" class="btn btn-success">Add New Plugin</a>
-</div>
 
 <style>
+    /* body {
+        background-color: #0b0c0e;
+        color: #e0e0e0;
+    }
+
+    h2 {
+        color: #55c7ff;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    } */
+
     .plugin-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -58,20 +33,90 @@ else if (Model != null)
         position: relative;
         border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transition: transform 0.2s;
+        box-shadow: 0 0 0 3px #55c7ff55;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #1c1e22;
     }
 
         .plugin-card:hover {
             transform: scale(1.03);
+            box-shadow: 0 0 12px #55c7ff88;
         }
 
     .plugin-overlay {
-        background-color: rgba(0, 0, 0, 0.6);
-        color: #fff;
+        /* background-color: rgba(0, 0, 0, 0.6);
+        color: #ffffff; */
         padding: 10px;
         position: absolute;
         bottom: 0;
         width: 100%;
     }
+
+    .top-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+        .top-bar input {
+            flex: 1;
+            /* background-color: #1a1a1a; */
+           /*  color: #fff; */
+            border: 1px solid #333;
+        }
+
+    .btn-primary,
+    .btn-success {
+        font-weight: 600;
+        box-shadow: 0 0 10px #55c7ff88;
+    }
+
+    .btn-success {
+        /* background-color: #00cc88; */
+        border: none;
+        color: #0b0c0e;
+    }
+
+        .btn-success:hover {
+            background-color: #00aa77;
+            color: white;
+            box-shadow: 0 0 15px #00cc8899;
+        }
 </style>
+
+<div class="container my-5">
+    <h2>Search for Plugins</h2>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="@Url.Action("AddPlugin", "Plugin")" class="btn btn-success">Add New Plugin</a>
+
+        <form method="get" asp-controller="Plugin" asp-action="Search" class="d-flex w-100">
+            <input type="text" name="query" class="form-control me-2" placeholder="Enter plugin name..." />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    <!-- Plugin Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="plugin-grid">
+            @foreach (var plugin in Model)
+            {
+                <a href="@Url.Action("Details", "Plugin", new { id = plugin.Id })" class="plugin-card-link">
+                    <div class="plugin-card" style="background-image: url('@plugin.BackgroundImageUrl'); background-size: cover; background-position: center;">
+                        <div class="plugin-overlay">
+                            <h5>@plugin.Name</h5>
+                            <p>Rating: @(plugin.Ratings?.Any() == true ? plugin.Ratings.Average(r => r.Stars).ToString("0.0") : "No ratings")</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted mt-4">No plugins found matching your query.</p>
+    }
+</div>

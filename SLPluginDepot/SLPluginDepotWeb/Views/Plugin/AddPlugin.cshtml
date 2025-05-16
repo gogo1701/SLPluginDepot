@@ -1,38 +1,103 @@
-﻿<form method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="pluginName">Plugin Name</label>
-        <input type="text" class="form-control" name="pluginName" id="pluginName" required />
-    </div>
+﻿@model SLPluginDepotModels.Models.Plugin
 
-    <div class="form-group">
-        <label for="pluginDescription">Plugin Description</label>
-        <textarea class="form-control" name="pluginDescription" id="pluginDescription" required></textarea>
-    </div>
+@{
+    ViewData["Title"] = "Add New Plugin";
+}
 
-    <div class="form-group">
-        <label for="githubUrl">GitHub URL</label>
-        <input type="text" class="form-control" name="githubUrl" id="githubUrl" />
-    </div>
+<style>
+    body {
+        background-color: #0b0c0e;
+        color: #c8c8c8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <div class="form-group">
-        <label for="pluginFile">Plugin File (.dll)</label>
-        <input type="file" class="form-control" name="pluginFile" id="pluginFile" accept=".dll" required />
-    </div>
+    h2 {
+        color: #55c7ff;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 10px #55c7ff88;
+    }
 
-    <div class="form-group">
-        <label for="backgroundImage">Background Image</label>
-        <input type="file" class="form-control" name="backgroundImage" id="backgroundImage" accept="image/*" />
-    </div>
+    label {
+        color: #55c7ff;
+        font-weight: 600;
+    }
 
-    <div class="form-group">
-        <label for="selectedTags">Tags</label>
-        <select multiple class="form-control" name="selectedTags" id="selectedTags">
-            @foreach (var tag in ViewBag.AvailableTags as List<PluginTag>)
-            {
-                <option value="@tag.Id">@tag.Name</option>
-            }
-        </select>
-    </div>
+    input.form-control,
+    textarea.form-control,
+    select.form-select {
+        background-color: #1a1a1a;
+        color: #c8c8c8;
+        border: 1px solid #333;
+        border-radius: 5px;
+    }
 
-    <button type="submit" class="btn btn-primary">Add Plugin</button>
-</form>
+        input.form-control::placeholder,
+        textarea.form-control::placeholder {
+            color: #666;
+        }
+
+    button.btn-primary {
+        background-color: #55c7ff;
+        border: none;
+        color: #0b0c0e;
+        font-weight: 700;
+        padding: 10px 24px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px #55c7ff88;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+        button.btn-primary:hover {
+            background-color: #2fa1db;
+            box-shadow: 0 0 25px #2fa1dbbb;
+            color: #f0f0f0;
+        }
+</style>
+
+<div class="container my-5">
+    <h2>Add New Plugin</h2>
+    <form asp-action="AddPlugin" asp-controller="Plugin" method="post" enctype="multipart/form-data" class="mx-auto" style="max-width: 600px;">
+        <div class="mb-3">
+            <label for="pluginName" class="form-label">Plugin Name</label>
+            <input type="text" class="form-control" id="pluginName" name="PluginName" placeholder="Enter plugin name" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="pluginDescription" class="form-label">Plugin Description</label>
+            <textarea class="form-control" id="pluginDescription" name="PluginDescription" rows="4" placeholder="Describe your plugin..." required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="githubUrl" class="form-label">GitHub URL</label>
+            <input type="url" class="form-control" id="githubUrl" name="GitHubUrl" placeholder="https://github.com/yourrepo" />
+        </div>
+
+        <div class="mb-3">
+            <label for="pluginFile" class="form-label">Plugin File (.dll)</label>
+            <input type="file" class="form-control" id="pluginFile" name="PluginFile" accept=".dll" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="backgroundImage" class="form-label">Background Image</label>
+            <input type="file" class="form-control" id="backgroundImage" name="BackgroundImage" accept="image/*" />
+        </div>
+
+        <div class="mb-3">
+            <label for="selectedTags" class="form-label">Select Tags</label>
+            <select multiple class="form-select" id="selectedTags" name="SelectedTags">
+                @if (ViewBag.AvailableTags != null)
+                {
+                    foreach (var tag in ViewBag.AvailableTags as List<SLPluginDepotModels.Models.PluginTag>)
+                    {
+                        <option value="@tag.Id">@tag.Name</option>
+                    }
+                }
+            </select>
+            <small class="text-muted">Hold Ctrl (Cmd on Mac) to select multiple tags.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Plugin</button>
+    </form>
+</div>

@@ -63,3 +63,41 @@ body {
         margin: 5px 0 0;
         font-size: 0.9rem;
     }
+/*    nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 1000;
+    color: #f0f0f0;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    user-select: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+nav .btn-browse {
+    background-color: #55c7ff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 5px;
+    color: #0b0c0e;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    text-decoration: none;
+}
+
+nav .btn-browse:hover {
+    background-color: #2fa1db;
+}
+*/

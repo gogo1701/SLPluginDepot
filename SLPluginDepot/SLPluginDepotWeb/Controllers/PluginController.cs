@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SLPluginDepotDB;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SLPluginDepotWeb.Controllers
 {
@@ -57,6 +58,7 @@ namespace SLPluginDepotWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult AddPlugin()
         {
             TempData.Clear();

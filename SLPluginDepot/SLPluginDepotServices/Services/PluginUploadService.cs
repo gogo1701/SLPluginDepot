@@ -95,57 +95,74 @@ namespace SLPluginDepotServices.Services
             string userId,
             IFormFile backgroundImage)
         {
+            // Step 1: Create a new plugin entity first (without pluginId)
+            var plugin = new Plugin
+            {
+                Name = pluginName,
+                Description = pluginDescription,
+                UploadedAt = DateTime.Now,
+                Version = "1.0",
+                AuthorId = userId,
+                GitHubUrl = githubUrl,
+                PluginTags = new List<PluginTag>()
+            };
+
+            // Step 2: Add the plugin to the database to generate the pluginId
+            _context.Plugins.Add(plugin);
+            await _context.SaveChangesAsync(); // Now pluginId will be generated
+
+            // Step 3: Get the generated pluginId from the database
+            var pluginId = plugin.Id.ToString();  // This is the unique identifier for the plugin
+
+            // Step 4: Create a folder for the plugin using its pluginId
+            var pluginDirectory = Path.Combine(_uploadPath, pluginId);
+            if (!Directory.Exists(pluginDirectory))
+            {
+                Directory.CreateDirectory(pluginDirectory);
+            }
+
+            // Step 5: Handle the plugin file upload
             if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
             {
                 var uniquePluginFileName = $"{Guid.NewGuid()}_{Path.GetFileName(pluginFile.FileName)}";
-                var pluginFilePath = Path.Combine(_uploadPath, uniquePluginFileName);
+                var pluginFilePath = Path.Combine(pluginDirectory, uniquePluginFileName);
 
+                // Save plugin file
                 using (var fileStream = new FileStream(pluginFilePath, FileMode.Create))
                 {
                     await pluginFile.CopyToAsync(fileStream);
                 }
 
-                var plugin = new Plugin
-                {
-                    Name = pluginName,
-                    Description = pluginDescription,
-                    FilePath = "/uploads/" + uniquePluginFileName, // Web-accessible
-                    FileName = uniquePluginFileName,
-                    UploadedAt = DateTime.Now,
-                    Version = "1.0",
-                    AuthorId = userId,
-                    GitHubUrl = githubUrl,
-                    PluginTags = new List<PluginTag>()
-                };
-
-                // Handle background image
-                if (backgroundImage != null && backgroundImage.Length > 0)
-                {
-                    var uniqueImageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(backgroundImage.FileName)}";
-                    var imagePath = Path.Combine(_uploadPath, uniqueImageFileName);
-
-                    using (var imageStream = new FileStream(imagePath, FileMode.Create))
-                    {
-                        await backgroundImage.CopyToAsync(imageStream);
-                    }
-
-                    plugin.BackgroundImageUrl = "/uploads/" + uniqueImageFileName; // Web-accessible
-                }
-
-                // Handle tags
-                if (tagIds != null && tagIds.Count > 0)
-                {
-                    var tags = _context.PluginTags.Where(t => tagIds.Contains(t.Id)).ToList();
-                    plugin.PluginTags = tags;
-                }
-
-                _context.Plugins.Add(plugin);
-                await _context.SaveChangesAsync();
-
-                return plugin;
+                plugin.FilePath = $"/uploads/{pluginId}/{uniquePluginFileName}";
+                plugin.FileName = uniquePluginFileName;
             }
 
-            return null;
+            // Step 6: Handle  background image upload
+            if (backgroundImage != null && backgroundImage.Length > 0)
+            {
+                var uniqueImageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(backgroundImage.FileName)}";
+                var imagePath = Path.Combine(pluginDirectory, uniqueImageFileName);
+
+                // Save image file
+                using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                {
+                    await backgroundImage.CopyToAsync(imageStream);
+                }
+
+                plugin.BackgroundImageUrl = $"/uploads/{pluginId}/{uniqueImageFileName}";
+            }
+
+            if (tagIds != null && tagIds.Count > 0)
+            {
+                var tags = _context.PluginTags.Where(t => tagIds.Contains(t.Id)).ToList();
+                plugin.PluginTags = tags;
+            }
+
+            _context.Plugins.Update(plugin);
+            await _context.SaveChangesAsync();
+
+            return plugin;
         }
+
     }
 }

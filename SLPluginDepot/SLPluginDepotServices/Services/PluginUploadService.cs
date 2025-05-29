@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SLPluginDepotDB;
 using SLPluginDepotModels.Models;
 using SLPluginDepotServices.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SLPluginDepotServices.Services
 {
@@ -95,7 +90,6 @@ namespace SLPluginDepotServices.Services
             string userId,
             IFormFile backgroundImage)
         {
-            // Step 1: Create a new plugin entity first (without pluginId)
             var plugin = new Plugin
             {
                 Name = pluginName,
@@ -107,27 +101,27 @@ namespace SLPluginDepotServices.Services
                 PluginTags = new List<PluginTag>()
             };
 
-            // Step 2: Add the plugin to the database to generate the pluginId
+            
             _context.Plugins.Add(plugin);
-            await _context.SaveChangesAsync(); // Now pluginId will be generated
+            await _context.SaveChangesAsync();
 
-            // Step 3: Get the generated pluginId from the database
-            var pluginId = plugin.Id.ToString();  // This is the unique identifier for the plugin
+            
+            var pluginId = plugin.Id.ToString(); 
 
-            // Step 4: Create a folder for the plugin using its pluginId
+            
             var pluginDirectory = Path.Combine(_uploadPath, pluginId);
             if (!Directory.Exists(pluginDirectory))
             {
                 Directory.CreateDirectory(pluginDirectory);
             }
 
-            // Step 5: Handle the plugin file upload
+            
             if (pluginFile != null && pluginFile.Length > 0 && Path.GetExtension(pluginFile.FileName).ToLower() == ".dll")
             {
                 var uniquePluginFileName = $"{Guid.NewGuid()}_{Path.GetFileName(pluginFile.FileName)}";
                 var pluginFilePath = Path.Combine(pluginDirectory, uniquePluginFileName);
 
-                // Save plugin file
+                
                 using (var fileStream = new FileStream(pluginFilePath, FileMode.Create))
                 {
                     await pluginFile.CopyToAsync(fileStream);
@@ -137,13 +131,13 @@ namespace SLPluginDepotServices.Services
                 plugin.FileName = uniquePluginFileName;
             }
 
-            // Step 6: Handle  background image upload
+            
             if (backgroundImage != null && backgroundImage.Length > 0)
             {
                 var uniqueImageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(backgroundImage.FileName)}";
                 var imagePath = Path.Combine(pluginDirectory, uniqueImageFileName);
 
-                // Save image file
+                
                 using (var imageStream = new FileStream(imagePath, FileMode.Create))
                 {
                     await backgroundImage.CopyToAsync(imageStream);

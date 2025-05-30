@@ -8,5 +8,6 @@ namespace SLPluginDepotServices.Interfaces
         public IEnumerable<PluginTag> GetAllTags();
 
         public Task<Plugin> GetPluginByIdAsync(int id);
+        
     }
 }

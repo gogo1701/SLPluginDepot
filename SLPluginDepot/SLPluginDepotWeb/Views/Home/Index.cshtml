@@ -6,19 +6,20 @@
     <div class="background-overlay">
         <div class="container">
             <div class="hero-content">
-                <h1>Enhance Your Gaming Experience with Plugins made by other fans</h1>
+                <h1>Enhance Your Gaming Experience with<br>Plugins made by other fans</h1>
                 <a href="#" class="btn btn-get-started">Get Started</a>
             </div>
-
         </div>
     </div>
 </section>
-<section>
+
+<section class="welcome-section">
     <div class="container">
         <div class="welcome-content">
             <h2>Welcome to SCP Plugin Depot</h2>
-            <div class="alert alert-warning mb-4">
-                <span class="me-2">⚠️</span> A fan-made plugin browser for SCP: Secret Laboratory.<br>
+            <div class="scp-alert">
+                <span class="me-2">⚠️</span>
+                A fan-made plugin browser for <strong>SCP: Secret Laboratory</strong>.<br>
                 Discover, rate, and share your favorite plugins!
             </div>
             <a href="#" class="btn btn-explore">Explore Plugins</a>
@@ -26,8 +27,13 @@
     </div>
 </section>
 
-
 <style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .hero-welcome-section {
         position: relative;
         background-image: url("/img/homeBackground.jpg");
@@ -35,79 +41,87 @@
         background-position: center;
         background-repeat: no-repeat;
         color: white;
-        text-align: center;
         max-height: 50vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 60px 20px;
     }
 
     .background-overlay {
-        background: rgba(0, 0, 0, 0.6); /* dark overlay */
         width: 100%;
         height: 100%;
-        padding: 60px 0;
+        padding: 130px 0;
     }
 
     .container {
         max-width: 900px;
         margin: 0 auto;
         text-align: center;
-        align-items: center;
-        justify-content: center;
     }
 
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 2.8rem;
         font-weight: 700;
         margin-bottom: 30px;
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
     }
 
     .welcome-content h2 {
-        font-size: 2rem;
-        margin-bottom: 20px;
+        font-size: 2.2rem;
+        margin-bottom: 25px;
+        font-weight: 600;
+        color: #fafafa;
     }
 
     .btn {
-        padding: 12px 24px;
-        font-size: 1.1rem;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: bold;
         border: none;
         border-radius: 8px;
         text-decoration: none;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
         display: inline-block;
         margin: 10px;
+        box-shadow: 0 0 12px rgba(0, 255, 200, 0.2);
     }
 
     .btn-get-started {
-        background-color: #007bff;
-        color: white;
+        background-color: #00bcd4;
+        color: #000;
     }
 
-        .btn-get-started:hover {
-            background-color: #0056b3;
-        }
+    .btn-get-started:hover {
+        background-color: #008b9c;
+        color: white;
+        box-shadow: 0 0 16px rgba(0, 255, 200, 0.6);
+    }
 
     .btn-explore {
         background-color: #28a745;
         color: white;
     }
 
-        .btn-explore:hover {
-            background-color: #1e7e34;
-        }
-
-    .alert {
-        background-color: rgba(255, 193, 7, 0.85);
-        color: #000;
-        display: inline-block;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    .btn-explore:hover {
+        background-color: #1e7e34;
+        box-shadow: 0 0 14px rgba(40, 167, 69, 0.5);
     }
 
-    section{
+    .scp-alert {
+        background-color: #2e2e2e;
+        border-left: 6px solid #ffc107;
+        padding: 16px 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        color: #ffecb3;
+        box-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+    }
+
+    .welcome-section {
+        padding: 60px 20px;
+    }
+
+    section {
         margin-bottom: 5%;
     }
 </style>

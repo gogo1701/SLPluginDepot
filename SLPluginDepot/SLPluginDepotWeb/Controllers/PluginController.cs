@@ -28,11 +28,25 @@ namespace SLPluginDepotWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1, int pageSize = 6)
         {
-            var plugins = _pluginService.GetPlugins();
-            return View(plugins);
+            var plugins = string.IsNullOrWhiteSpace(query)
+                ? _pluginService.GetPlugins()
+                : _pluginService.GetPluginsFromQuery(query);
+
+            int totalPlugins = plugins.Count();
+            var paginatedPlugins = plugins
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = (int)Math.Ceiling((double)totalPlugins / pageSize);
+            ViewData["Query"] = query;
+
+            return View(paginatedPlugins);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> DownloadPlugin(int id)
@@ -124,6 +138,7 @@ namespace SLPluginDepotWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> AddPlugin(
             IFormFile pluginFile,
             string pluginName,
@@ -133,6 +148,12 @@ namespace SLPluginDepotWeb.Controllers
             IFormFile backgroundImage)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Handle the error, e.g. return Unauthorized or a friendly error
+                return Unauthorized("You must be logged in to upload a plugin!");
+            }
 
             var result = await _pluginUploadService.UploadPluginWithTagsAsync(
                 pluginFile,
@@ -158,8 +179,7 @@ namespace SLPluginDepotWeb.Controllers
         [HttpGet]
         public IActionResult Search(string query)
         {
-            var plugins = _pluginService.GetPluginsFromQuery(query);
-            return View("Index", plugins);
+            return RedirectToAction("Index", new { query });
         }
 
         [HttpPost]

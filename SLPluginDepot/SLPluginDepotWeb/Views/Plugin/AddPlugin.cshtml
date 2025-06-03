@@ -61,32 +61,32 @@
     <form asp-action="AddPlugin" asp-controller="Plugin" method="post" enctype="multipart/form-data" class="mx-auto" style="max-width: 600px;">
         <div class="mb-3">
             <label for="pluginName" class="form-label">Plugin Name</label>
-            <input type="text" class="form-control" id="pluginName" name="PluginName" placeholder="Enter plugin name" required />
+            <input type="text" class="form-control" id="pluginName" name="pluginName" placeholder="Enter plugin name" required />
         </div>
 
         <div class="mb-3">
             <label for="pluginDescription" class="form-label">Plugin Description</label>
-            <textarea class="form-control" id="pluginDescription" name="PluginDescription" rows="4" placeholder="Describe your plugin..." required></textarea>
+            <textarea class="form-control" id="pluginDescription" name="pluginDescription" rows="4" placeholder="Describe your plugin..." required></textarea>
         </div>
 
         <div class="mb-3">
             <label for="githubUrl" class="form-label">GitHub URL</label>
-            <input type="url" class="form-control" id="githubUrl" name="GitHubUrl" placeholder="https://github.com/yourrepo" />
+            <input type="url" class="form-control" id="githubUrl" name="githubUrl" placeholder="https://github.com/yourrepo" />
         </div>
 
         <div class="mb-3">
             <label for="pluginFile" class="form-label">Plugin File (.dll)</label>
-            <input type="file" class="form-control" id="pluginFile" name="PluginFile" accept=".dll" required />
+            <input type="file" class="form-control" id="pluginFile" name="pluginFile" accept=".dll" required />
         </div>
 
         <div class="mb-3">
             <label for="backgroundImage" class="form-label">Background Image</label>
-            <input type="file" class="form-control" id="backgroundImage" name="BackgroundImage" accept="image/*" />
+            <input type="file" class="form-control" id="backgroundImage" name="backgroundImage" accept="image/*" />
         </div>
 
         <div class="mb-3">
             <label for="selectedTags" class="form-label">Select Tags</label>
-            <select multiple class="form-select" id="selectedTags" name="SelectedTags">
+            <select multiple class="form-select" id="selectedTags" name="selectedTags">
                 @if (ViewBag.AvailableTags != null)
                 {
                     foreach (var tag in ViewBag.AvailableTags as List<SLPluginDepotModels.Models.PluginTag>)

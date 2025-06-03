@@ -25,7 +25,7 @@ namespace SLPluginDepotModels.Models
         public string AuthorId { get; set; }
         public ApplicationUser Author { get; set; }
 
-        public string BackgroundImageUrl { get; set; }
+        public string? BackgroundImageUrl { get; set; }
         public double Rating { get; set; }
 
         //public int? OrganizationId { get; set; }

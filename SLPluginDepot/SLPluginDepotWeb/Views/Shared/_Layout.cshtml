@@ -114,10 +114,23 @@
                 </ul>
 
                 <!-- Right auth buttons -->
-                <div class="d-flex">
-                    <a href="#" class="btn btn-register btn-auth me-0">Register</a>
-                    <a href="#" class="btn btn-login btn-auth">Login</a>
+                <div class="d-flex align-items-center">
+	                @if (User.Identity.IsAuthenticated)
+	                {
+		                <span class="me-3" style="font-weight: 500; font-size: 18px; color: #333;">
+			                Hello, @User.Identity.Name
+		                </span>
+		                <form method="post" asp-controller="Account" asp-action="Logout" class="d-inline">
+			                <button type="submit" class="btn btn-login btn-auth">Logout</button>
+		                </form>
+	                }
+	                else
+	                {
+		                <a href="/Account/Register" class="btn btn-register btn-auth me-2">Register</a>
+		                <a href="/Account/Login" class="btn btn-login btn-auth">Login</a>
+	                }
                 </div>
+
             </div>
         </div>
     </nav>
